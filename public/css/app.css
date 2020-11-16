@@ -1,0 +1,15 @@
+.container{
+    width: 40%;
+    margin-left: 30%;
+    background-color: skyblue;
+    margin-top: 2%;
+    padding: 20px;
+    border-radius: 2%;;
+}
+.table{
+    width:60%;
+    margin-left: 20%;
+}
+.buttton{
+    width:20px;
+}
