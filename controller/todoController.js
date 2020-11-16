@@ -1,29 +1,6 @@
 const Todo = require('../model/todoModel');
 
 
-// const addTask = async (req, res) => {
-//     try {
-//         var list = {
-//             'task': req.sanitize(req.body.list.task),
-//             'description': req.sanitize(req.body.list.description),
-//             'date': req.sanitize(req.body.list.date)
-//         }
-
-//         const newList = new Todo(list);
-//         const result = await newList.save();
-
-//         if (!result) {
-//             return res.status(404).json({
-//                 error :  "Error in adding new task!",
-//             });
-//         };
-//     } catch (e) {
-//         return res.status(404).json({
-//             error: e,
-//         });
-//     }
-// };
-
 const addTask = (req, res) => {
     var list = {
         'task': req.sanitize(req.body.task),
@@ -41,80 +18,92 @@ const addTask = (req, res) => {
 };
 
 
-
-
-
 const getTask = async (req, res) => {
-    // try {
-    //     const tasks = await Todo.find();
-    //     if (!tasks) {
-    //         return res.status(404).json({
-    //             error: "Error in getting tasks!",
-    //         });
-    //     }
-    //     res.render("index", {
-    //         list: tasks
-    //     });
-
-    // } catch (e) {
-    //     return res.status(404).json({
-    //         error: e,
-    //     });
-    // }
-    Todo.find({}, function(err, task) {
-        if(err) {
-            console.log(err);
+    try{
+        const task = await Todo.find();
+        if(!task){
+            return res.status(404).json({
+                error: "Error in getting Task!",
+            });
         }
         res.render("index", {
-            list: task
+                     list: task
+                 });
+    }catch(e){
+        return response.status(404).json({
+            error: e,
         });
-        // res.json(player)
-    });
+    }
 };
 
 
 const deleteTask = async(req, res) => {
-
     try{
        await Todo.findByIdAndRemove({_id: req.params.id } ,(err, result) => {
            if(err){
                return res.status(404).json({
+                   message: "Error uy",
                    err : err
                });  
            }
-
-        //    res.render("index",{
-        //         list : task
-        //    })
-
-        //    res.status(200).json({
-        //        message: "Okay na",
-        //        result : result
-        //    })
         res.redirect('/')
-       })
+        })
     }
     catch(e){
         return res.status(404).json({
+            message : "Error uy",
             err: e
         })
     }
 };
 
+const getTaskForUpdate = async(req,res) => {
+    try{
+        Todo.findById(req.params.id, (err,task) => {
+            if(err){
+                return res.status(404).json({
+                    message : "Error uy"
+                })
+            }
+            // console.log(task);
 
+            res.render("task/update",{list : task})
+        })
+    }
+    catch (e) {
+        return res.status(404).json({
+            message: "Error uyy!",
+            err : e
+        })
+    }
+
+};
 
 const updateTask = async(req, res) => {
     try{
-        
+        const result = await Todo.updateOne(
+            {_id: req.params.id},
+            {$set:req.body}
+        );
+        if (!result) {
+            return response.status(404).json({
+                error: "Error in updating task!",
+            })
+        }
+        res.status(200).redirect('/');
     }
-    catch{
-
+    catch(e){
+        res.status(404).json({
+            message: "Error uyy",
+            err : e
+        })
     }
 }
 
 module.exports = {
     addTask,
     getTask,
-    deleteTask
-
+    deleteTask,
+    updateTask,
+    getTaskForUpdate
 }

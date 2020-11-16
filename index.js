@@ -19,19 +19,13 @@ app.use(express.static(__dirname +'public'));
 
 app.set('views', path.join(__dirname, 'view'));
 
-let dbUrl = 'mongodb://127.0.0.1/todoList';
 
 
-mongoose.connect(dbUrl , {
-    useNewUrlParser: true,
-    useUnifiedTopology : true,
-    useFindAndModify: true
-});
+const database = require("./services/database");
+database.connect();
 
 const TaskRoute = require('./routes/todoRoutes');
 app.use(TaskRoute);
 
-app.listen(3000,
-    console.log('Server started at port 3000')
-    )
+app.listen(8000, console.log("The server is running on port 8000"));
 
